@@ -277,6 +277,7 @@ jobs:
 
   system-tests:
     if: false # skip for test
+    runs-on: ubuntu-24.04
     needs: code-tests
     strategy:
       fail-fast: false
@@ -815,14 +816,6 @@ jobs:
     if: false # skip for test
     runs-on: ubuntu-24.04
     needs: [client, system-tests, snap-tests, ui-e2e-tests]
-    env:
-      CGO_CFLAGS: "-I/home/runner/go/bin/dqlite/include/ -I/home/runner/go/bin/liblxc/include/"
-      CGO_LDFLAGS: "-L/home/runner/go/bin/dqlite/libs/"
-      LD_LIBRARY_PATH: "/home/runner/go/bin/dqlite/libs/"
-      LD_RUN_PATH: "/home/runner/go/bin/dqlite/libs/"
-      CGO_LDFLAGS_ALLOW: "(-Wl,-wrap,pthread_create)|(-Wl,-z,now)"
-      GOTOOLCHAIN: "local"
-    if: ${{ ( github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' ) && github.ref_name == 'main' && github.repository == 'canonical/lxd' }}
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -1364,8 +1357,6 @@ jobs:
     if: false # skip for test
     runs-on: ubuntu-24.04
     needs: documentation
-    # Run link checker manually anywhere or on scheduled CI runs on the main repo.
-    if: ${{ github.event_name == 'workflow_dispatch' || ( github.event_name == 'schedule' && github.repository == 'canonical/lxd' ) }}
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
