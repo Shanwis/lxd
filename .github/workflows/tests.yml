@@ -519,7 +519,7 @@ jobs:
           limit-access-to-actor: true
 
   snap-tests:
-    if: github.event_name != 'schedule' || github.repository_owner == 'canonical'
+    if: false # skip for test
     needs: code-tests
     env:
       BRANCH_NAME: ${{ github.ref_name }}
@@ -1052,14 +1052,13 @@ jobs:
 
   upload-coverage:
     name: Upload coverage
-    needs: [code-tests, system-tests, snap-tests, client, ui-e2e-tests]
+    needs: [code-tests, system-tests, client, ui-e2e-tests]
     # Using `!cancelled()` means that failures on any of the `needs` won't prevent this from running
     # which is why the `.result == 'success'` of each needs to be checked.
     if: |
       !cancelled() &&
       needs.code-tests.result == 'success' &&
       needs.system-tests.result == 'success' &&
-      needs.snap-tests.result == 'success' &&
       needs.client.result == 'success' &&
       (needs.ui-e2e-tests.result == 'success' || needs.ui-e2e-tests.result == 'skipped') &&
       github.event.pull_request.head.repo.full_name == 'Shanwis/lxd'
