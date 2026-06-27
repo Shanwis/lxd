@@ -49,7 +49,7 @@ on:
 env:
   LXD_SKIP_TESTS: "concurrent"  # concurrent is too unreliable/racy
   LXD_REQUIRED_TESTS: "network_ovn"
-  GOCOVERAGE: ${{ (github.repository == 'canonical/lxd' || inputs.coverage == true) && 'true' || 'false' }}
+  GOCOVERAGE: ${{ (github.repository == 'Shanwis/lxd' || inputs.coverage == true) && 'true' || 'false' }}
   GOCOVERDIR: ''  # Later set to the fully qualified path if needed
   IMAGE_CACHE_DIR: "/home/runner/image-cache"
   SNAP_CACHE_DIR: "/home/runner/snap-cache"
@@ -1062,7 +1062,7 @@ jobs:
       needs.snap-tests.result == 'success' &&
       needs.client.result == 'success' &&
       (needs.ui-e2e-tests.result == 'success' || needs.ui-e2e-tests.result == 'skipped') &&
-      github.event.pull_request.head.repo.full_name == 'canonical/lxd'
+      github.event.pull_request.head.repo.full_name == 'Shanwis/lxd'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
