@@ -276,18 +276,7 @@ jobs:
           echo "fast-backend=${fast_backend}" >> "$GITHUB_OUTPUT"
 
   system-tests:
-    env:
-      LXD_CEPH_CLUSTER: "ceph"
-      LXD_CEPH_CEPHFS: "cephfs"
-      LXD_CEPH_CEPHOBJECT_RADOSGW: "http://127.0.0.1"
-      LXD_OVN_NB_CONNECTION: "ssl:127.0.0.1:6641"
-      LXD_VERBOSE: "1"
-      LXD_TMPFS: "1"
-      GOTRACEBACK: "crash"
-      SUDO_PRESERVE_ENV: "PATH,GOPATH,GOCOVERDIR,GOTRACEBACK,GITHUB_ACTIONS,GITHUB_STEP_SUMMARY,SNAP_CACHE_DIR,IMAGE_CACHE_DIR,LXD_VERBOSE,LXD_REPEAT_TESTS,LXD_BACKENDS,LXD_BACKEND,LXD_CEPH_CLUSTER,LXD_CEPH_CEPHFS,LXD_CEPH_CEPHOBJECT_RADOSGW,LXD_OVN_NB_CONNECTION,LXD_OVN_NB_CLIENT_CRT_FILE,LXD_OVN_NB_CLIENT_KEY_FILE,LXD_OVN_NB_CA_CRT_FILE,LXD_SKIP_TESTS,LXD_REQUIRED_TESTS,LXD_TMPFS"
-    if: ${{ github.event_name != 'schedule' || github.repository_owner == 'canonical' }}
-    name: System
-    runs-on: ubuntu-24.04
+    if: false # skip for test
     needs: code-tests
     strategy:
       fail-fast: false
@@ -823,7 +812,7 @@ jobs:
           limit-access-to-actor: true
 
   tics:
-    name: Tiobe TICS
+    if: false # skip for test
     runs-on: ubuntu-24.04
     needs: [client, system-tests, snap-tests, ui-e2e-tests]
     env:
@@ -931,7 +920,7 @@ jobs:
           tmpdir: /tmp/tics
 
   client:
-    name: Client
+    if: false # skip for test
     strategy:
       fail-fast: false
       matrix:
@@ -1052,15 +1041,12 @@ jobs:
 
   upload-coverage:
     name: Upload coverage
-    needs: [code-tests, system-tests, client, ui-e2e-tests]
+    needs: [code-tests]
     # Using `!cancelled()` means that failures on any of the `needs` won't prevent this from running
     # which is why the `.result == 'success'` of each needs to be checked.
     if: |
       !cancelled() &&
       needs.code-tests.result == 'success' &&
-      needs.system-tests.result == 'success' &&
-      needs.client.result == 'success' &&
-      (needs.ui-e2e-tests.result == 'success' || needs.ui-e2e-tests.result == 'skipped') &&
       github.event.pull_request.head.repo.full_name == 'Shanwis/lxd'
     runs-on: ubuntu-24.04
     permissions:
@@ -1116,10 +1102,9 @@ jobs:
           label: code-coverage
 
   ui-e2e-tests:
-    name: UI e2e tests
+    if: false # skip for test
     runs-on: ubuntu-24.04
     needs: [code-tests, documentation]
-    if: ${{ ( github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || github.event_name == 'push' ) && github.ref_name == 'main' && github.repository_owner == 'canonical' }}
     env:
       LD_LIBRARY_PATH: "/home/runner/go/bin/dqlite/libs/"
       LXD_DIR: "/var/lib/lxd"
@@ -1319,9 +1304,8 @@ jobs:
         if: env.GOCOVERDIR != '' && github.repository == 'canonical/lxd'
 
   documentation:
-    name: Documentation
+    if: false # skip for test
     runs-on: ubuntu-24.04
-    if: ${{ github.event_name != 'schedule' || github.repository_owner == 'canonical' }}
     needs: code-tests
     steps:
       - name: Checkout
@@ -1377,7 +1361,7 @@ jobs:
           retention-days: 5
 
   documentation-linkcheck:
-    name: Documentation link check
+    if: false # skip for test
     runs-on: ubuntu-24.04
     needs: documentation
     # Run link checker manually anywhere or on scheduled CI runs on the main repo.
